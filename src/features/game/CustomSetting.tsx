@@ -1,23 +1,14 @@
+import { map } from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/pipeable";
 import React from "react";
 import styles from "./CustomSetting.module.css";
-import { SettingInput, InputNumber } from "./Setting";
-import { pipe } from "fp-ts/lib/pipeable";
-import { map } from "fp-ts/lib/Either";
+import { InputNumber, SettingInput } from "./Setting";
 
 type Props = {
   settings: SettingInput;
   disabled?: boolean;
   onChange: (value: SettingInput) => void;
 };
-
-function toNumber(newVal: string, oldVal: number) {
-  const num = Number(newVal);
-  if (!isNaN(num)) {
-    return num;
-  } else {
-    return oldVal;
-  }
-}
 
 export const CustomSetting: React.FC<Props> = ({
   settings,
@@ -72,7 +63,7 @@ export const CustomSetting: React.FC<Props> = ({
           type="text"
           value={settings.mines}
           disabled={disabled}
-          pattern="[0-9]{1,2}"
+          pattern="[0-9]{1,3}"
           onChange={(ev) =>
             pipe(
               InputNumber.decode(ev.target.value),

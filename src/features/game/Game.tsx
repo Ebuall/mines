@@ -18,7 +18,7 @@ export const Game: React.FC = () => {
   const dispatch = useDispatch();
   const state = useSelector((state: RootState) => state.game);
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} onContextMenu={(ev) => ev.preventDefault()}>
       {state.mode === "game" && <Board settings={state.settings}></Board>}
       {state.mode === "menu" && (
         <>

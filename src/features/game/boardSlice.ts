@@ -1,16 +1,21 @@
-import { createSlice, Action } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { map } from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/pipeable";
 import { gameSlice } from "./gameSlice";
 import { SettingInput, ValidatedSetting } from "./Setting";
-import { pipe } from "fp-ts/lib/pipeable";
-import { map } from "fp-ts/lib/Either";
 
 export type Point = ReturnType<typeof Point>;
 export function Point(x: number, y: number) {
   return { x, y };
 }
-type Box = ReturnType<typeof Box>;
-function Box(value = 0, open = false) {
-  return { value, open };
+export enum BoxState {
+  Closed,
+  Open,
+  Flagged,
+}
+export type Box = ReturnType<typeof Box>;
+export function Box(value = 0, state = BoxState.Closed) {
+  return { value, state };
 }
 Box.isMine = function (box: Box) {
   return box.value < 0;
@@ -83,7 +88,7 @@ function populatedMap(
     flattenedMap[i].value = -10;
   }
   shuffle(flattenedMap);
-  flattenedMap.splice(click.y * width + click.x, 0, Box(0, true));
+  flattenedMap.splice(click.y * width + click.x, 0, Box(0, BoxState.Open));
 
   const map: Box[][] = new Array(height);
   for (let row = 0; row < map.length; row++) {
@@ -106,6 +111,7 @@ export enum GameState {
   Init,
   Progress,
   Over,
+  Win,
 }
 
 type ActionWith<T> = {
@@ -146,24 +152,17 @@ export const boardSlice = createSlice({
         );
       } else {
         const clicked = state.map[click.y][click.x];
-        clicked.open = true;
+        clicked.state = BoxState.Open;
         if (Box.isMine(clicked)) {
           state.gameState = GameState.Over;
-          for (const row of state.map) {
-            for (const box of row) {
-              if (Box.isMine(box)) {
-                box.open = true;
-              }
-            }
-          }
         }
       }
       function openAroundZero(map: Box[][], pt: Point) {
         if (map[pt.y][pt.x].value === 0) {
           Box.forEachNeighbor(map, pt, (box, point) => {
-            if (box.open) return;
+            if (box.state === BoxState.Open) return;
             if (box.value >= 0) {
-              box.open = true;
+              box.state = BoxState.Open;
               console.log("opening around", point);
               openAroundZero(map, point);
             }
@@ -171,6 +170,30 @@ export const boardSlice = createSlice({
         }
       }
       openAroundZero(state.map, click);
+      const boxesLeftToOpen = state.map.reduce(
+        (count, row) =>
+          count +
+          row.reduce(
+            (count, box) =>
+              count +
+              (!Box.isMine(box) && box.state === BoxState.Closed ? 1 : 0),
+            0,
+          ),
+        0,
+      );
+      if (boxesLeftToOpen === 0) {
+        state.gameState = GameState.Win;
+      }
+    },
+    flag: (state, { payload: { x, y } }: ActionWith<Point>) => {
+      if (state.gameState === GameState.Progress) {
+        state.map[y][x].state = BoxState.Flagged;
+      }
+    },
+    unflag: (state, { payload: { x, y } }: ActionWith<Point>) => {
+      if (state.gameState === GameState.Progress) {
+        state.map[y][x].state = BoxState.Closed;
+      }
     },
   },
   extraReducers: {
