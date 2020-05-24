@@ -1,0 +1,51 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.square {
+  border: 2px outset black;
+  background-color: rgb(228, 228, 228);
+  height: 20px;
+  flex: 0 0 20px;
+  font-size: 13px;
+  line-height: 14px;
+  font-weight: 700;
+  text-align: center;
+  user-select: none;
+}
+
+.open {
+  border: 1px solid rgb(204, 203, 203);
+}
+
+.m1 {
+  color: rgb(0, 194, 16);
+}
+.m2 {
+  color: rgb(167, 170, 13);
+}
+.m3 {
+  color: rgb(238, 95, 0);
+}
+.m4 {
+  color: rgb(211, 0, 0);
+}
+.m5 {
+  color: rgb(175, 1, 161);
+}
+.m6 {
+  color: rgb(155, 0, 77);
+}
+.m7 {
+  color: rgb(114, 0, 53);
+}
+.m8 {
+  color: rgb(34, 0, 0);
+}

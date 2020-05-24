@@ -1,0 +1,19 @@
+.wrapper {
+  border: 1px solid black;
+  background-color: white;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.wrapper > * {
+  flex: 1 0;
+  padding: 5px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.selected {
+  background-color: aqua;
+}
