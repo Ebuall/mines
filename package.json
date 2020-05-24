@@ -2,6 +2,7 @@
   "name": "mines",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://ebuall.github.io/mines/",
   "dependencies": {
     "@reduxjs/toolkit": "^1.2.5",
     "@testing-library/jest-dom": "^4.2.4",
@@ -13,6 +14,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-redux": "^7.1.7",
     "fp-ts": "^2.6.1",
+    "gh-pages": "^2.2.0",
     "io-ts": "^2.2.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -21,6 +23,8 @@
     "typescript": "~3.8.2"
   },
   "scripts": {
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
